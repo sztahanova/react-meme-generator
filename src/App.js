@@ -1,13 +1,18 @@
-import './App.css';
 import MemeGenerator from './components/MemeGeneratorComponent';
 import Header from './components/HeaderComponent';
+import loadSztahanovaTheme from './theme';
+import { Stack } from '@fluentui/react';
+import Footer from './components/FooterComponent';
+
+loadSztahanovaTheme();
 
 function App() {
   return (
-    <div className="App">
+    <Stack className="App">
       <Header />
       <MemeGenerator />
-    </div>
+      <Footer />
+    </Stack>
   );
 }
 

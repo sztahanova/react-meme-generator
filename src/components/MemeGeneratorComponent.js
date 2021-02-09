@@ -1,40 +1,85 @@
-import React, { Component } from "react";
+import { getTheme, PrimaryButton, Stack, TextField } from "@fluentui/react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { DEFAULT_MEME_IMAGE, MEME_IMAGES } from "./../links";
 
-class MemeGenerator extends Component {
-  constructor() {
-    super();
+const styles = {
+  root: {
+    padding: 20,
+    backgroundColor: getTheme().palette.white,
+  },
+  buttonContainer: {
+    display: "flex",
+    justifyContent: "center",
+    paddingBottom: 25,
+  },
+  formContainer: {
+    width: "80%",
+    maxWidth: 600,
+  },
+  input: {
+    fieldGroup: [
+      {
+        borderColor: getTheme().palette.themePrimary,
+        borderWidth: 2,
+      },
+    ],
+  },
+  memeContainer: { position: "relative", margin: "auto" },
+  memeImage: { maxWidth: "100%" },
+  h2: {
+    position: "absolute",
+    width: "80%",
+    textAlign: "center",
+    left: "50%",
+    transform: "translateX(-50%)",
+    margin: "15px 0",
+    padding: "0 5px",
+    fontFamily: "impact, sans-serif",
+    fontSize: 40,
+    textTransform: "uppercase",
+    color: "white",
+    letterSpacing: 1,
+    textShadow:
+      "2px 2px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 0 2px 0 #000, 2px 0 0 #000, 0 -2px 0 #000, -2px 0 0 #000, 2px 2px 5px #000",
+  },
+  top: {
+    top: 0,
+  },
+  bottom: {
+    bottom: 0,
+  },
+};
 
-    this.state = {
-      topText: "",
-      bottomText: "",
-      randomImage: DEFAULT_MEME_IMAGE,
-      allMemeImages: [],
-    };
+const MemeGenerator = () => {
+  const theme = getTheme();
 
-    this.canvasRef = React.createRef();
-    this.canvasContextRef = React.createRef();
-    this.imageRef = React.createRef();
+  const [topText, setTopText] = useState("");
+  const [bottomText, setBottomText] = useState("");
+  const [randomImage, setRandomImage] = useState(DEFAULT_MEME_IMAGE);
+  const [originalSize, setOriginalSize] = useState([568, 335]);
+  const [allMemeImages, setAllMemeImages] = useState([]);
 
-    this.handleChange = this.handleChange.bind(this);
-    this.handleClick = this.handleClick.bind(this);
-    this.handleDownload = this.handleDownload.bind(this);
-  }
+  const canvasRef = useRef();
+  const canvasContextRef = useRef();
+  const imageRef = useRef();
 
-  componentDidMount() {
+  const getImages = useCallback(() => {
     fetch(MEME_IMAGES)
       .then((res) => res.json())
       .then((res) => {
         if (res.success) {
           const memes = res.data.memes;
-          this.setState({ allMemeImages: memes });
+          setAllMemeImages(memes);
         }
       });
+  }, []);
+  useEffect(() => getImages(), [getImages]);
 
-    const canvas = this.canvasRef.current;
-    this.canvasContextRef.current = canvas.getContext("2d");
-    const ctx = this.canvasContextRef.current;
-    const img = this.imageRef.current;
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    canvasContextRef.current = canvas.getContext("2d");
+    const ctx = canvasContextRef.current;
+    const img = imageRef.current;
 
     img.crossOrigin = "anonymous";
 
@@ -44,9 +89,11 @@ class MemeGenerator extends Component {
       ctx.canvas.height = img.height;
       ctx.drawImage(img, 0, 0);
     };
-  }
+  });
 
-  getLines(ctx, text, maxWidth) {
+  const getLines = (text, maxWidth) => {
+    const ctx = canvasContextRef.current;
+    console.log(text);
     var words = text.toUpperCase().split(" ");
     var lines = [];
     var currentLine = words[0];
@@ -66,72 +113,61 @@ class MemeGenerator extends Component {
 
     console.log(lines);
     return lines;
-  }
+  };
 
-  writeTopTextOnCanvas() {
-    const ctx = this.canvasContextRef.current;
-    const img = this.imageRef.current;
-    const topLines = this.getLines(ctx, this.state.topText, img.width);
+  const writeTopTextOnCanvas = () => {
+    const [width, height] = originalSize;
+    const ctx = canvasContextRef.current;
+    const topLines = getLines(topText, width);
     const offset = 40;
 
     topLines.forEach((line, index) => {
-      ctx.strokeText(line, img.width / 2, offset + index * offset);
-      ctx.fillText(line, img.width / 2, offset + index * offset);
+      ctx.strokeText(line, width / 2, offset + index * offset);
+      ctx.fillText(line, width / 2, offset + index * offset);
     });
-  }
+  };
 
-  writeBottomTextOnCanvas() {
-    const ctx = this.canvasContextRef.current;
-    const img = this.imageRef.current;
-    const bottomLines = this.getLines(
-      ctx,
-      this.state.bottomText,
-      img.width
-    ).reverse();
+  const writeBottomTextOnCanvas = () => {
+    const [width, height] = originalSize;
+    const ctx = canvasContextRef.current;
+    const bottomLines = getLines(bottomText, width).reverse();
     const offset = 40;
     const bottomOffset = 10;
 
     bottomLines.forEach((line, index) => {
-      ctx.strokeText(
-        line,
-        img.width / 2,
-        img.height - bottomOffset - index * offset
-      );
-      ctx.fillText(
-        line,
-        img.width / 2,
-        img.height - bottomOffset - index * offset
-      );
+      ctx.strokeText(line, width / 2, height - bottomOffset - index * offset);
+      ctx.fillText(line, width / 2, height - bottomOffset - index * offset);
     });
-  }
+  };
 
-  handleChange(event) {
-    const { name, value } = event.target;
-    this.setState({ [name]: value });
-  }
-
-  handleClick(event) {
+  const handleClick = (event) => {
     event.preventDefault();
 
-    const randomIndex = Math.floor(
-      Math.random() * this.state.allMemeImages.length
-    );
-    const randomMeme = this.state.allMemeImages[randomIndex].url;
-    this.setState({ topText: "", bottomText: "", randomImage: randomMeme });
-  }
+    const randomIndex = Math.floor(Math.random() * allMemeImages.length);
+    const randomMeme = allMemeImages[randomIndex].url;
+    setOriginalSize([
+      allMemeImages[randomIndex].width,
+      allMemeImages[randomIndex].height,
+    ]);
 
-  handleDownload(event) {
+    setTopText("");
+    setBottomText("");
+    setRandomImage(randomMeme);
+  };
+
+  const handleDownload = (event) => {
     event.preventDefault();
 
-    const canvas = this.canvasRef.current;
-    const ctx = this.canvasContextRef.current;
-    const img = this.imageRef.current;
+    const [width, height] = originalSize;
+    const canvas = canvasRef.current;
+    const ctx = canvasContextRef.current;
+    const img = imageRef.current;
 
     img.crossOrigin = "anonymous";
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.canvas.width = img.width;
-    ctx.canvas.height = img.height;
+    ctx.canvas.width = width;
+    ctx.canvas.height = height;
     ctx.drawImage(img, 0, 0);
     ctx.font = "30px Impact";
 
@@ -142,49 +178,54 @@ class MemeGenerator extends Component {
     ctx.shadowBlur = 0;
     ctx.fillStyle = "white";
 
-    this.writeTopTextOnCanvas();
-    this.writeBottomTextOnCanvas();
+    writeTopTextOnCanvas();
+    writeBottomTextOnCanvas();
 
     var link = document.createElement("a");
     link.download = "generated-meme.png";
-    link.href = this.canvasRef.current.toDataURL();
+    link.href = canvasRef.current.toDataURL();
     link.click();
-  }
+  };
 
-  render() {
-    return (
-      <div>
-        <button onClick={this.handleClick}>Change meme</button>
-        <form className="meme-form">
-          <input
-            type="text"
-            name="topText"
-            placeholder="Top Text"
-            value={this.state.topText}
-            onChange={this.handleChange}
-          />
-          <input
-            type="text"
-            name="bottomText"
-            placeholder="Bottom Text"
-            value={this.state.bottomText}
-            onChange={this.handleChange}
-          />
-        </form>
-        <div className="meme">
-          <img
-            ref={this.imageRef}
-            alt="random-meme"
-            src={this.state.randomImage}
-          />
-          <h2 className="top">{this.state.topText}</h2>
-          <h2 className="bottom">{this.state.bottomText}</h2>
-        </div>
-        <canvas ref={this.canvasRef} hidden />
-        <button onClick={this.handleDownload}>Download meme</button>
+  return (
+    <Stack
+      grow
+      horizontalAlign="center"
+      tokens={{ childrenGap: 30 }}
+      style={styles.root}
+    >
+      <div style={styles.buttonContainer}>
+        <PrimaryButton onClick={handleClick}>Change meme</PrimaryButton>
       </div>
-    );
-  }
-}
+      <Stack tokens={{ childrenGap: 10 }} style={styles.formContainer}>
+        <TextField
+          value={topText}
+          placeholder="Top Text"
+          onChange={(event) => setTopText(event.target.value)}
+          styles={() => styles.input}
+          width="45%"
+        />
+        <TextField
+          value={bottomText}
+          placeholder="Bottom Text"
+          onChange={(event) => setBottomText(event.target.value)}
+          styles={() => styles.input}
+        />
+      </Stack>
+      <div style={styles.memeContainer}>
+        <img
+          ref={imageRef}
+          alt="random-meme"
+          src={randomImage}
+          style={styles.memeImage}
+        />
+        <h2 style={{ ...styles.h2, ...styles.top }}>{topText}</h2>
+        <h2 style={{ ...styles.h2, ...styles.bottom }}>{bottomText}</h2>
+      </div>
+      <canvas ref={canvasRef} hidden />
+      <PrimaryButton onClick={handleDownload}>Download meme</PrimaryButton>
+    </Stack>
+  );
+};
 
 export default MemeGenerator;
