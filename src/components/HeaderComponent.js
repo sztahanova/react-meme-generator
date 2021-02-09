@@ -1,5 +1,6 @@
 import { getTheme, Image, Text } from "@fluentui/react";
 import React from "react";
+import { TROLL_FACE_IMAGE } from "../links";
 
 const Header = () => {
   const theme = getTheme();
@@ -22,7 +23,7 @@ const Header = () => {
   return (
     <div style={headerStyles.root}>
       <Image
-        src="http://www.pngall.com/wp-content/uploads/2016/05/Trollface.png"
+        src={TROLL_FACE_IMAGE}
         alt="Problem?"
         height={80}
       />
