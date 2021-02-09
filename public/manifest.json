@@ -1,19 +1,19 @@
 {
   "short_name": "React Meme Generator",
-  "name": "Random Meme Generator built with React",
+  "name": "Random Meme Generator built with React and Fluent UI",
   "icons": [
     {
-      "src": "favicon.ico",
+      "src": "green-computer-code.ico",
       "sizes": "64x64 32x32 24x24 16x16",
       "type": "image/x-icon"
     },
     {
-      "src": "logo192.png",
+      "src": "green-computer-code-256.png",
       "type": "image/png",
-      "sizes": "192x192"
+      "sizes": "256x256"
     },
     {
-      "src": "logo512.png",
+      "src": "green-computer-code-512.png",
       "type": "image/png",
       "sizes": "512x512"
     }

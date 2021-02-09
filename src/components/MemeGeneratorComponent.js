@@ -2,56 +2,49 @@ import { getTheme, PrimaryButton, Stack, TextField } from "@fluentui/react";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { DEFAULT_MEME_IMAGE, MEME_IMAGES } from "./../links";
 
-const styles = {
-  root: {
-    padding: 20,
-    backgroundColor: getTheme().palette.white,
-  },
-  buttonContainer: {
-    display: "flex",
-    justifyContent: "center",
-    paddingBottom: 25,
-  },
-  formContainer: {
-    width: "80%",
-    maxWidth: 600,
-  },
-  input: {
-    fieldGroup: [
-      {
-        borderColor: getTheme().palette.themePrimary,
-        borderWidth: 2,
-      },
-    ],
-  },
-  memeContainer: { position: "relative", margin: "auto" },
-  memeImage: { maxWidth: "100%" },
-  h2: {
-    position: "absolute",
-    width: "80%",
-    textAlign: "center",
-    left: "50%",
-    transform: "translateX(-50%)",
-    margin: "15px 0",
-    padding: "0 5px",
-    fontFamily: "impact, sans-serif",
-    fontSize: 40,
-    textTransform: "uppercase",
-    color: "white",
-    letterSpacing: 1,
-    textShadow:
-      "2px 2px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 0 2px 0 #000, 2px 0 0 #000, 0 -2px 0 #000, -2px 0 0 #000, 2px 2px 5px #000",
-  },
-  top: {
-    top: 0,
-  },
-  bottom: {
-    bottom: 0,
-  },
-};
 
 const MemeGenerator = () => {
   const theme = getTheme();
+  
+  const styles = {
+    root: {
+      padding: 20,
+      backgroundColor: theme.palette.white,
+    },
+    buttonContainer: {
+      display: "flex",
+      justifyContent: "center",
+      paddingBottom: 25,
+    },
+    formContainer: {
+      width: "80%",
+      maxWidth: 600,
+    },
+    memeContainer: { position: "relative", margin: "auto" },
+    memeImage: { maxWidth: "100%" },
+    h2: {
+      position: "absolute",
+      width: "80%",
+      textAlign: "center",
+      left: "50%",
+      transform: "translateX(-50%)",
+      margin: "15px 0",
+      padding: "0 5px",
+      fontFamily: "impact, sans-serif",
+      fontSize: 40,
+      textTransform: "uppercase",
+      color: "white",
+      letterSpacing: 1,
+      textShadow:
+        "2px 2px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 0 2px 0 #000, 2px 0 0 #000, 0 -2px 0 #000, -2px 0 0 #000, 2px 2px 5px #000",
+    },
+    top: {
+      top: 0,
+    },
+    bottom: {
+      bottom: 0,
+    },
+  };
 
   const [topText, setTopText] = useState("");
   const [bottomText, setBottomText] = useState("");
@@ -187,6 +180,17 @@ const MemeGenerator = () => {
     link.click();
   };
 
+  const getStyles = () => {
+    return {
+      fieldGroup: [
+        {
+          borderColor: theme.palette.themePrimary,
+          borderWidth: 2,
+        },
+      ],
+    };
+  };
+
   return (
     <Stack
       grow
@@ -202,14 +206,14 @@ const MemeGenerator = () => {
           value={topText}
           placeholder="Top Text"
           onChange={(event) => setTopText(event.target.value)}
-          styles={() => styles.input}
+          styles={getStyles}
           width="45%"
         />
         <TextField
           value={bottomText}
           placeholder="Bottom Text"
           onChange={(event) => setBottomText(event.target.value)}
-          styles={() => styles.input}
+          styles={getStyles}
         />
       </Stack>
       <div style={styles.memeContainer}>
