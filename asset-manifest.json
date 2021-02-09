@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/react-meme-generator/static/css/main.5f11833d.chunk.css",
-    "main.js": "/react-meme-generator/static/js/main.9590245f.chunk.js",
-    "main.js.map": "/react-meme-generator/static/js/main.9590245f.chunk.js.map",
+    "main.js": "/react-meme-generator/static/js/main.aacaa463.chunk.js",
+    "main.js.map": "/react-meme-generator/static/js/main.aacaa463.chunk.js.map",
     "runtime-main.js": "/react-meme-generator/static/js/runtime-main.c24e498f.js",
     "runtime-main.js.map": "/react-meme-generator/static/js/runtime-main.c24e498f.js.map",
     "static/js/2.4b641b49.chunk.js": "/react-meme-generator/static/js/2.4b641b49.chunk.js",
@@ -17,6 +17,6 @@
     "static/js/runtime-main.c24e498f.js",
     "static/js/2.4b641b49.chunk.js",
     "static/css/main.5f11833d.chunk.css",
-    "static/js/main.9590245f.chunk.js"
+    "static/js/main.aacaa463.chunk.js"
   ]
 }
